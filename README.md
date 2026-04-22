@@ -59,27 +59,58 @@ git submodule update --init
 ## 更新專案
 
 ### 更新 functiontest
-- GitHub Desktop：`Fetch origin → Pull`
-- 或在 AS Terminal 執行：`git pull`
+
+**GitHub Desktop：**
+1. 點選上方 **Fetch origin**
+2. 出現 **Pull origin** 後點擊
+
+**命令列：**
+```bash
+git pull
+```
 
 ### 更新 core submodule
-在 AS 底部 Terminal 執行：
+
+> GitHub Desktop 不支援 submodule 更新，需使用 AS 底部 Terminal：
 
 ```bash
 git submodule update --remote
 ```
 
-更新後記得在 AS 執行 `File → Sync Project with Gradle Files`。
+更新後在 AS 執行 `File → Sync Project with Gradle Files`。
 
 ---
 
 ## 提交修改
 
 ### 修改 functiontest（app 程式碼）
-直接透過 AS 的 Git 功能或 GitHub Desktop commit/push。
+
+**GitHub Desktop：**
+1. 左側會列出所有變更的檔案
+2. 勾選要提交的檔案
+3. 左下角填寫 commit 訊息，點 **Commit to main**
+4. 點上方 **Push origin** 推上 GitHub
+
+**Android Studio：**
+1. `Git → Commit`
+2. 勾選變更的檔案，填寫訊息，點 **Commit and Push**
+
+---
 
 ### 修改 core 模組
-core 是獨立的 repository，修改後需要分別 push：
 
-1. 在 `functiontest/core` 目錄 commit 並 push → 推到 [core repo](https://github.com/cybersoftpower-ellislu/core)
-2. 回到 `functiontest` 目錄 commit 並 push → 更新 submodule 指標
+core 是獨立的 repository，需要分別對兩個 repo 各做一次 commit/push。
+
+**步驟一：push core 的修改**
+
+GitHub Desktop：
+1. 左上角切換 Repository → 選 **core**
+2. 勾選變更檔案，填寫 commit 訊息
+3. **Commit to main** → **Push origin**
+
+**步驟二：push functiontest 的 submodule 指標更新**
+
+GitHub Desktop：
+1. 切換 Repository → 選 **functiontest**
+2. 左側會出現 `core` 的變更（submodule 指標更新）
+3. 填寫 commit 訊息，**Commit to main** → **Push origin**

@@ -9,9 +9,19 @@ Android 機器功能測試應用程式，使用 [core](https://github.com/cybers
 | 項目 | 說明 |
 |---|---|
 | Package | `com.cyberpower.functiontest` |
-| minSdk | 22 |
+| minSdk | 24 (Android 7.0) |
 | targetSdk | 34 |
 | Core 模組 | Git Submodule |
+
+---
+
+## 📚 文檔
+
+- **[AGENTS.md](./AGENTS.md)** - 專案架構文檔（AI 開發指南）
+- **[docs/](./docs/)** - 開發文檔目錄
+  - [MainActivity_Setup.md](./docs/MainActivity_Setup.md) - MainActivity 實作指南
+  - [編譯錯誤修復指南.md](./docs/編譯錯誤修復指南.md) - 編譯問題解決
+  - 更多文檔請參考 [docs/README.md](./docs/README.md)
 
 ---
 

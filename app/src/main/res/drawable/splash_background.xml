@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+
+    <!-- 背景色 - 與 activity_splash.xml 的背景相同 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorPrimary" />
+        </shape>
+    </item>
+
+    <!--
+        注意：移除了 Logo 以避免资源找不到的错误
+        如果需要添加 Logo，请确保图片资源存在
+        然后添加以下代码（取消注释）：
+
+    <item
+        android:width="120dp"
+        android:height="120dp"
+        android:gravity="center">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/your_logo_here" />
+    </item>
+    -->
+
+</layer-list>
+

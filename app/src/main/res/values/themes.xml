@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Functiontest" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Functiontest" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- Splash Screen 主題 - 使用進階版啟動畫面（渐变背景）-->
+    <style name="Theme.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 使用進階版啟動畫面 drawable（含漸變背景）-->
+        <item name="android:windowBackground">@drawable/splash_background_advanced</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
 </resources>

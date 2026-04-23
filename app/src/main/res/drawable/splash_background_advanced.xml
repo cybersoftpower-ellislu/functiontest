@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    進階版啟動畫面 - 包含 Logo 和漸變背景
+    如果想使用此版本，請在 themes.xml 中將 @drawable/splash_background 改為 @drawable/splash_background_advanced
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+
+    <!-- 背景色 -->
+    <item>
+        <shape android:shape="rectangle">
+            <!-- 純色背景（已注释，改用漸變）-->
+            <!-- <solid android:color="@color/colorPrimary" /> -->
+
+            <!-- 漸變背景（已启用）-->
+            <gradient
+                android:angle="135"
+                android:centerColor="@color/colorPrimary"
+                android:endColor="@color/colorPrimaryDark"
+                android:startColor="#42A5F5"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 中央 Logo（已注释掉以避免资源错误）
+         如果需要添加 Logo，请确保图片资源存在，然后取消下方注释 -->
+    <!--
+    <item
+        android:width="120dp"
+        android:height="120dp"
+        android:gravity="center">
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/your_logo_here" />
+    </item>
+    -->
+
+</layer-list>
+

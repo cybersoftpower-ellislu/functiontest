@@ -49,12 +49,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
      * 初始化畫面元件
      */
     private void initViews() {
-        // 設定工具列
-        binding.toolbar.setTitle(R.string.app_name);
+        // 設定工具列標題為"功能測試"（使用自定義 TextView 置中顯示）
+        binding.toolbarTitle.setText(R.string.function_test_title);
+
+        // 隱藏 Toolbar 預設標題
+        binding.toolbar.setTitle("");
+
         binding.toolbar.setNavigationIcon(R.drawable.ic_menu);
         binding.toolbar.setNavigationOnClickListener(v -> {
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 binding.drawerLayout.openDrawer(GravityCompat.START);
+                // 打開選單時恢復預設標題
+                binding.toolbarTitle.setText(R.string.function_test_title);
             } else {
                 binding.drawerLayout.closeDrawer(GravityCompat.START);
             }
@@ -156,6 +162,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
             }
         });
 
+        // 觀察標題更新事件
+        viewModel.titleUpdateEvent.observe(this, title -> {
+            if (title != null) {
+                binding.toolbarTitle.setText(title);
+                LogUtils.d(TAG, "更新 Action Bar 標題: " + title);
+            }
+        });
 
         // 觀察結束事件
         viewModel.finishEvent.observe(this, unused -> finish());
@@ -191,6 +204,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
+            // 按返回鍵時恢復預設標題
+            binding.toolbarTitle.setText(R.string.function_test_title);
             super.onBackPressed();
         }
     }

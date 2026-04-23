@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Function Test</string>
+    <string name="function_test_title">功能測試</string>
     <string name="welcome_message">歡迎使用功能測試系統</string>
     <string name="test_button">執行測試</string>
     <string name="drawer_hint">點擊左上角選單可查看更多功能</string>

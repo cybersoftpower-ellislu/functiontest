@@ -21,6 +21,9 @@ public class MainViewModel extends BaseViewModel {
     
     // 導航事件（用於處理 drawer 項目點擊）
     public SingleLiveEvent<String> navigationEvent = new SingleLiveEvent<>();
+    
+    // 標題更新事件（用於更新 Action Bar 標題）
+    public SingleLiveEvent<String> titleUpdateEvent = new SingleLiveEvent<>();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -41,6 +44,7 @@ public class MainViewModel extends BaseViewModel {
      */
     public void onNavigationItemClick(String itemName) {
         navigationEvent.setValue(itemName);
+        titleUpdateEvent.setValue(itemName);  // 更新標題
         LogUtils.d(TAG, "導航項目點擊: " + itemName);
     }
 

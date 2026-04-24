@@ -195,13 +195,13 @@ public class ApiTestViewModel extends BaseViewModel {
         addInfoMessage("========== 系統資訊測試 ==========");
 
         try {
-            // Android 系統資訊
-            addInfoMessage("設備型號: " + android.os.Build.MODEL);
+            // 1. 製造商
             addInfoMessage("製造商: " + android.os.Build.MANUFACTURER);
-            addInfoMessage("Android 版本: " + android.os.Build.VERSION.RELEASE);
-            addInfoMessage("SDK 版本: " + android.os.Build.VERSION.SDK_INT);
 
-            // 獲取設備序號 (SN)
+            // 2. 設備型號
+            addInfoMessage("設備型號: " + android.os.Build.MODEL);
+
+            // 3. 設備序號 (SN)
             try {
                 HardwareManager hwManager = HardwareManager.getInstance();
                 if (hwManager != null && hwManager.getSys() != null) {
@@ -217,6 +217,12 @@ public class ApiTestViewModel extends BaseViewModel {
             } catch (Exception e) {
                 addWarningMessage("設備序號 (SN): 獲取失敗 - " + e.getMessage());
             }
+
+            // 4. Android 版本
+            addInfoMessage("Android 版本: " + android.os.Build.VERSION.RELEASE);
+
+            // 5. Android SDK 版本
+            addInfoMessage("Android SDK 版本: " + android.os.Build.VERSION.SDK_INT);
 
             addSuccessMessage("系統資訊測試完成！");
         } catch (Exception e) {

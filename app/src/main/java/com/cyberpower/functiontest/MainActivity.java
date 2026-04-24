@@ -150,6 +150,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
         // 第一層：PAX（根據設備類型設定啟用狀態）
         DrawerGroup paxGroup = new DrawerGroup("PAX", isPaxDevice);
+        paxGroup.addChild("API測試");  // 新增：API 測試項目
         paxGroup.addChild("列印測試");
         paxGroup.addChild("掃碼測試");
         paxGroup.addChild("卡片讀取測試");
@@ -157,6 +158,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
         // 第一層：CASTLES（根據設備類型設定啟用狀態）
         DrawerGroup castlesGroup = new DrawerGroup("CASTLES", isCastlesDevice);
+        castlesGroup.addChild("API測試");  // 新增：API 測試項目
         castlesGroup.addChild("列印測試");
         castlesGroup.addChild("掃碼測試");
         castlesGroup.addChild("卡片讀取測試");
@@ -219,7 +221,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         LogUtils.d(TAG, "點擊: " + itemName);
 
         viewModel.onNavigationItemClick(itemName);
-        viewModel.performTest(itemName);
+        
+        // 如果點擊 "API測試"，加載 API 測試 Fragment
+        if ("API測試".equals(itemName)) {
+            loadApiTestFragment();
+        } else {
+            viewModel.performTest(itemName);
+        }
+    }
+
+    /**
+     * 加載 API 測試 Fragment
+     */
+    private void loadApiTestFragment() {
+        LogUtils.d(TAG, "加載 API 測試 Fragment");
+        
+        ApiTestFragment fragment = new ApiTestFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack("ApiTest")
+                .commit();
     }
 
     @Override

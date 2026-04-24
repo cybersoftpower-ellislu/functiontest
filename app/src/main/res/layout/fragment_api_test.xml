@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.cyberpower.functiontest.ApiTestViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@android:color/white">
+
+        <!-- 標題 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="API 測試"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 選擇測試項目區域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <Spinner
+                android:id="@+id/spinner_test_items"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/btn_execute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="執行"
+                android:textSize="16sp"
+                android:layout_marginStart="8dp"
+                android:minWidth="100dp" />
+        </LinearLayout>
+
+        <!-- 測試項目說明 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="測試項目說明"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_test_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="請選擇測試項目"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:minHeight="80dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 執行過程訊息 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="執行過程訊息"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 可滾動的訊息區域 -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#F5F5F5"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tv_log_messages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="等待執行..."
+                android:textSize="12sp"
+                android:textColor="@android:color/black"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="2dp" />
+        </ScrollView>
+
+        <!-- 清除按鈕 -->
+        <Button
+            android:id="@+id/btn_clear_log"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="清除訊息"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+    </LinearLayout>
+</layout>
+

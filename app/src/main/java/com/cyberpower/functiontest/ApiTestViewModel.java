@@ -13,10 +13,6 @@ import com.cyberpower.edc.core.device.hardware.castles.CastlesHelper;
 import com.cyberpower.edc.core.device.hardware.hardwareinterface.IHelper;
 import com.cyberpower.edc.core.device.hardware.pax.PaxHelper;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 /**
  * ApiTestViewModel
  * API 測試畫面的 ViewModel
@@ -38,8 +34,6 @@ public class ApiTestViewModel extends BaseViewModel {
 
     // 清除按鈕點擊事件
     public SingleLiveEvent<Void> clearLogClickEvent = new SingleLiveEvent<>();
-
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
 
     // 設備類型枚舉
     public enum DeviceType {
@@ -128,8 +122,8 @@ public class ApiTestViewModel extends BaseViewModel {
      * 添加日誌訊息
      */
     public void addLogMessage(String message) {
-        String timestamp = timeFormat.format(new Date());
-        String logEntry = "[" + timestamp + "] " + message + "\n";
+        // 不再添加时间戳，直接显示消息
+        String logEntry = message + "\n";
 
         String currentLog = logMessages.getValue();
         if (currentLog == null) {
@@ -206,7 +200,23 @@ public class ApiTestViewModel extends BaseViewModel {
             addInfoMessage("製造商: " + android.os.Build.MANUFACTURER);
             addInfoMessage("Android 版本: " + android.os.Build.VERSION.RELEASE);
             addInfoMessage("SDK 版本: " + android.os.Build.VERSION.SDK_INT);
-            addInfoMessage("設備名稱: " + android.os.Build.DEVICE);
+            
+            // 獲取設備序號 (SN)
+            try {
+                HardwareManager hwManager = HardwareManager.getInstance();
+                if (hwManager != null && hwManager.getSys() != null) {
+                    String sn = hwManager.getSys().getSn();
+                    if (sn != null && !sn.isEmpty()) {
+                        addInfoMessage("設備序號 (SN): " + sn);
+                    } else {
+                        addWarningMessage("設備序號 (SN): 無法獲取");
+                    }
+                } else {
+                    addWarningMessage("設備序號 (SN): 系統接口不可用");
+                }
+            } catch (Exception e) {
+                addWarningMessage("設備序號 (SN): 獲取失敗 - " + e.getMessage());
+            }
 
             addSuccessMessage("系統資訊測試完成！");
         } catch (Exception e) {

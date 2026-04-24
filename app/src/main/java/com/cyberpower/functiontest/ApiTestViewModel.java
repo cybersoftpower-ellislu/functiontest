@@ -1,5 +1,8 @@
 package com.cyberpower.functiontest;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.cyberpower.edc.core.base.BaseViewModel;
@@ -34,8 +37,8 @@ public class ApiTestViewModel extends BaseViewModel {
 
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
 
-    public ApiTestViewModel(boolean isProgressEnabled) {
-        super(isProgressEnabled);
+    public ApiTestViewModel(@NonNull Application application) {
+        super(application);
         LogUtils.d(TAG, "ApiTestViewModel 已創建");
     }
 

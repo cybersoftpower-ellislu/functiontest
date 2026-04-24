@@ -143,28 +143,28 @@ public class ApiTestViewModel extends BaseViewModel {
      * 添加錯誤訊息
      */
     public void addErrorMessage(String message) {
-        addLogMessage("❌ [錯誤] " + message);
+        addLogMessage("[錯誤] " + message);
     }
 
     /**
      * 添加成功訊息
      */
     public void addSuccessMessage(String message) {
-        addLogMessage("✅ [成功] " + message);
+        addLogMessage("[成功] " + message);
     }
 
     /**
      * 添加警告訊息
      */
     public void addWarningMessage(String message) {
-        addLogMessage("⚠️ [警告] " + message);
+        addLogMessage("[警告] " + message);
     }
 
     /**
      * 添加資訊訊息
      */
     public void addInfoMessage(String message) {
-        addLogMessage("ℹ️ [資訊] " + message);
+        addLogMessage("[資訊] " + message);
     }
 
     /**
@@ -200,7 +200,7 @@ public class ApiTestViewModel extends BaseViewModel {
             addInfoMessage("製造商: " + android.os.Build.MANUFACTURER);
             addInfoMessage("Android 版本: " + android.os.Build.VERSION.RELEASE);
             addInfoMessage("SDK 版本: " + android.os.Build.VERSION.SDK_INT);
-            
+
             // 獲取設備序號 (SN)
             try {
                 HardwareManager hwManager = HardwareManager.getInstance();

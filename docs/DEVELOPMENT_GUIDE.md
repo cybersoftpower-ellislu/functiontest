@@ -11,6 +11,7 @@
 - [专案架构](#专案架构)
 - [MainActivity 实现](#mainactivity-实现)
 - [SplashActivity 实现](#splashactivity-实现)
+- [API 测试功能](#api-测试功能)
 - [UI 组件规范](#ui-组件规范)
 - [Git 工作流程](#git-工作流程)
 
@@ -442,6 +443,165 @@ private void startNavigation() {
     android:name=".MainActivity"
     android:exported="false" />
 ```
+
+---
+
+## API 测试功能
+
+**更新日期**: 2026-04-24
+
+### 功能说明
+
+API 测试功能提供一个完整的测试框架，用于测试各种硬件和系统功能。
+
+### 文件结构
+
+- `ApiTestFragment.java` - API 测试 Fragment
+- `ApiTestViewModel.java` - ViewModel，管理测试逻辑
+- `fragment_api_test.xml` - API 测试布局
+
+### 访问方式
+
+```
+Drawer → PAX/CASTLES → API測試
+```
+
+### 功能组件
+
+#### 1. 测试项目选择
+
+```java
+// 8 个 Dummy 测试项目
+1. 系统資訊測試 (已實現)
+2. 硬體管理器測試
+3. 列印功能測試
+4. 掃碼功能測試
+5. 卡片讀取測試
+6. 網路連接測試
+7. 加密功能測試
+8. 綜合壓力測試
+```
+
+#### 2. UI 组件
+
+```xml
+<!-- 下拉选单 + 执行按钮 -->
+<Spinner android:id="@+id/spinner_test_items" />
+<Button android:id="@+id/btn_execute" android:text="執行" />
+
+<!-- 测试说明 -->
+<TextView android:id="@+id/tv_test_description" />
+
+<!-- 可滚动的消息欄 -->
+<ScrollView>
+    <TextView android:id="@+id/tv_log_messages" />
+</ScrollView>
+
+<!-- 清除按钮 -->
+<Button android:id="@+id/btn_clear_log" android:text="清除訊息" />
+```
+
+#### 3. ViewModel 方法
+
+```java
+// 日志管理
+public void addLogMessage(String message);       // 一般訊息
+public void addErrorMessage(String message);     // ❌ 錯誤
+public void addSuccessMessage(String message);   // ✅ 成功
+public void addWarningMessage(String message);   // ⚠️ 警告
+public void addInfoMessage(String message);      // ℹ️ 資訊
+public void clearLogMessages();                  // 清除
+
+// 执行测试
+public void executeTest(String testItem);
+```
+
+#### 4. 日志格式
+
+```
+[HH:mm:ss.SSS] ℹ️ [資訊] 訊息內容
+[HH:mm:ss.SSS] ✅ [成功] 測試成功
+[HH:mm:ss.SSS] ❌ [錯誤] 測試失敗
+[HH:mm:ss.SSS] ⚠️ [警告] 注意事項
+```
+
+### 实现测试范例
+
+```java
+// 系统资讯测试
+private void performSystemInfoTest() {
+    viewModel.addInfoMessage("========== 系統資訊測試 ==========");
+    
+    try {
+        viewModel.addInfoMessage("設備型號: " + Build.MODEL);
+        viewModel.addInfoMessage("製造商: " + Build.MANUFACTURER);
+        viewModel.addInfoMessage("Android 版本: " + Build.VERSION.RELEASE);
+        viewModel.addInfoMessage("SDK 版本: " + Build.VERSION.SDK_INT);
+        
+        viewModel.addSuccessMessage("系統資訊測試完成！");
+    } catch (Exception e) {
+        viewModel.addErrorMessage("測試失敗: " + e.getMessage());
+        LogUtils.e(TAG, "系統資訊測試失敗", e);
+    }
+}
+
+// 硬件管理器测试
+private void performHardwareManagerTest() {
+    viewModel.addInfoMessage("========== 硬體管理器測試 ==========");
+    
+    try {
+        HardwareManager hwManager = HardwareManager.getInstance();
+        IHelper helper = hwManager.getHelper();
+        
+        if (helper instanceof PaxHelper) {
+            viewModel.addSuccessMessage("檢測到 PAX 設備");
+        } else if (helper instanceof CastlesHelper) {
+            viewModel.addSuccessMessage("檢測到 Castles 設備");
+        } else {
+            viewModel.addWarningMessage("使用 DummyHelper");
+        }
+        
+        viewModel.addSuccessMessage("硬體管理器測試完成！");
+    } catch (Exception e) {
+        viewModel.addErrorMessage("測試失敗: " + e.getMessage());
+    }
+}
+```
+
+### MVVM 架构
+
+```
+ApiTestFragment (View)
+        ↕ (DataBinding)
+ApiTestViewModel (ViewModel)
+        ↕ (LiveData/SingleLiveEvent)
+Business Logic / Hardware API
+```
+
+### 观察者绑定
+
+```java
+// Fragment 中设置观察者
+viewModel.testDescription.observe(getViewLifecycleOwner(), description -> {
+    binding.tvTestDescription.setText(description);
+});
+
+viewModel.logMessages.observe(getViewLifecycleOwner(), messages -> {
+    binding.tvLogMessages.setText(messages);
+    // 自动滚动到底部
+    scrollView.fullScroll(View.FOCUS_DOWN);
+});
+
+viewModel.toastEvent.observe(getViewLifecycleOwner(), message -> {
+    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+});
+```
+
+### 详细文档
+
+完整的实现文档请参考：
+- `docs/API_Test_Feature_Implementation.md` - 完整功能文档
+- `docs/2026-04-24-API測試功能完成報告.md` - 完成报告
 
 ---
 

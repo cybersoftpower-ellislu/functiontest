@@ -232,23 +232,23 @@ public class ApiTestFragment extends BaseFragment<FragmentApiTestBinding, ApiTes
         // 根據不同的測試項目執行不同的測試邏輯
         switch (position) {
             case 0: // 系統資訊測試
-                performSystemInfoTest();
+                viewModel.executeSystemInfoTest();
                 break;
 
             case 1: // 硬體管理器測試
-                performHardwareManagerTest();
+                viewModel.executeHardwareManagerTest();
                 break;
 
             case 2: // 列印功能測試
-                performPrintTest();
+                viewModel.executePrintTest();
                 break;
 
             case 3: // 掃碼功能測試
-                performScanTest();
+                viewModel.executeScanTest();
                 break;
 
             case 4: // 卡片讀取測試
-                performCardReaderTest();
+                viewModel.executeCardReaderTest();
                 break;
 
             case 5: // 網路連接測試
@@ -256,7 +256,7 @@ public class ApiTestFragment extends BaseFragment<FragmentApiTestBinding, ApiTes
                 break;
 
             case 6: // 加密功能測試
-                performCryptoTest();
+                viewModel.executeCryptoTest();
                 break;
 
             case 7: // 綜合壓力測試
@@ -270,63 +270,7 @@ public class ApiTestFragment extends BaseFragment<FragmentApiTestBinding, ApiTes
     }
 
     /**
-     * 系統資訊測試
-     */
-    private void performSystemInfoTest() {
-        viewModel.addInfoMessage("========== 系統資訊測試 ==========");
-
-        try {
-            viewModel.addInfoMessage("設備型號: " + android.os.Build.MODEL);
-            viewModel.addInfoMessage("製造商: " + android.os.Build.MANUFACTURER);
-            viewModel.addInfoMessage("Android 版本: " + android.os.Build.VERSION.RELEASE);
-            viewModel.addInfoMessage("SDK 版本: " + android.os.Build.VERSION.SDK_INT);
-            viewModel.addInfoMessage("設備名稱: " + android.os.Build.DEVICE);
-
-            viewModel.addSuccessMessage("系統資訊測試完成！");
-        } catch (Exception e) {
-            viewModel.addErrorMessage("系統資訊測試失敗: " + e.getMessage());
-            LogUtils.e(TAG, "系統資訊測試失敗", e);
-        }
-    }
-
-    /**
-     * 硬體管理器測試
-     */
-    private void performHardwareManagerTest() {
-        viewModel.addInfoMessage("========== 硬體管理器測試 ==========");
-        viewModel.addWarningMessage("此功能需要實現 HardwareManager 檢測");
-        viewModel.addInfoMessage("提示: 在這裡添加 HardwareManager 相關測試代碼");
-    }
-
-    /**
-     * 列印功能測試
-     */
-    private void performPrintTest() {
-        viewModel.addInfoMessage("========== 列印功能測試 ==========");
-        viewModel.addWarningMessage("此功能需要實現列印機測試");
-        viewModel.addInfoMessage("提示: 在這裡添加列印功能測試代碼");
-    }
-
-    /**
-     * 掃碼功能測試
-     */
-    private void performScanTest() {
-        viewModel.addInfoMessage("========== 掃碼功能測試 ==========");
-        viewModel.addWarningMessage("此功能需要實現掃碼器測試");
-        viewModel.addInfoMessage("提示: 在這裡添加掃碼功能測試代碼");
-    }
-
-    /**
-     * 卡片讀取測試
-     */
-    private void performCardReaderTest() {
-        viewModel.addInfoMessage("========== 卡片讀取測試 ==========");
-        viewModel.addWarningMessage("此功能需要實現卡片讀取器測試");
-        viewModel.addInfoMessage("提示: 在這裡添加卡片讀取測試代碼");
-    }
-
-    /**
-     * 網路連接測試
+     * 網路連接測試（Fragment 中實現）
      */
     private void performNetworkTest() {
         viewModel.addInfoMessage("========== 網路連接測試 ==========");
@@ -335,16 +279,7 @@ public class ApiTestFragment extends BaseFragment<FragmentApiTestBinding, ApiTes
     }
 
     /**
-     * 加密功能測試
-     */
-    private void performCryptoTest() {
-        viewModel.addInfoMessage("========== 加密功能測試 ==========");
-        viewModel.addWarningMessage("此功能需要實現加密功能測試");
-        viewModel.addInfoMessage("提示: 在這裡添加加密測試代碼");
-    }
-
-    /**
-     * 綜合壓力測試
+     * 綜合壓力測試（Fragment 中實現）
      */
     private void performStressTest() {
         viewModel.addInfoMessage("========== 綜合壓力測試 ==========");

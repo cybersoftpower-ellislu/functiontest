@@ -75,6 +75,19 @@ public class DrawerAdapter extends BaseExpandableListAdapter {
         MainActivity.DrawerGroup group = data.get(groupPosition);
         holder.tvGroupName.setText(group.name);
 
+        // 根據啟用狀態設定視覺效果
+        if (group.enabled) {
+            // 啟用狀態：正常顯示
+            holder.tvGroupName.setAlpha(1.0f);
+            holder.tvIndicator.setAlpha(1.0f);
+            holder.tvGroupName.setTextColor(0xFF000000); // 黑色
+        } else {
+            // 禁用狀態：降低透明度，改為灰色
+            holder.tvGroupName.setAlpha(0.4f);
+            holder.tvIndicator.setAlpha(0.4f);
+            holder.tvGroupName.setTextColor(0xFF999999); // 灰色
+        }
+
         // 如果有子項目，顯示指示器
         if (group.children.isEmpty()) {
             holder.tvIndicator.setVisibility(View.GONE);
@@ -99,8 +112,20 @@ public class DrawerAdapter extends BaseExpandableListAdapter {
             holder = (ChildViewHolder) convertView.getTag();
         }
 
-        String childName = data.get(groupPosition).children.get(childPosition);
+        MainActivity.DrawerGroup group = data.get(groupPosition);
+        String childName = group.children.get(childPosition);
         holder.tvChildName.setText(childName);
+
+        // 根據父群組的啟用狀態設定視覺效果
+        if (group.enabled) {
+            // 啟用狀態：正常顯示
+            holder.tvChildName.setAlpha(1.0f);
+            holder.tvChildName.setTextColor(0xFF000000); // 黑色
+        } else {
+            // 禁用狀態：降低透明度，改為灰色
+            holder.tvChildName.setAlpha(0.4f);
+            holder.tvChildName.setTextColor(0xFF999999); // 灰色
+        }
 
         return convertView;
     }

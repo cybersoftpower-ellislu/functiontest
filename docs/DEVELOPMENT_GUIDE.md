@@ -219,6 +219,71 @@ protected void onClickProtected(View view, View.OnClickListener listener) {
 }
 ```
 
+#### 7. 基于设备类型的动态选单 ⭐ NEW
+
+**更新日期**: 2026-04-24
+
+根据 HardwareManager 的 Helper 类型动态启用/禁用选单项目。
+
+**选单结构**:
+```
+├── PAX (根据设备启用/禁用)
+│   ├── 列印測試
+│   ├── 掃碼測試
+│   └── 卡片讀取測試
+├── CASTLES (根据设备启用/禁用)
+│   ├── 列印測試
+│   ├── 掃碼測試
+│   └── 卡片讀取測試
+├── 設定 (始終啟用)
+└── 關於 (始終啟用)
+```
+
+**设备检测逻辑**:
+```java
+private void initDrawerData() {
+    // 检测当前设备类型
+    boolean isPaxDevice = false;
+    boolean isCastlesDevice = false;
+
+    HardwareManager hwManager = HardwareManager.getInstance();
+    if (hwManager.getHelper() instanceof PaxHelper) {
+        isPaxDevice = true;
+    } else if (hwManager.getHelper() instanceof CastlesHelper) {
+        isCastlesDevice = true;
+    }
+
+    // 根据设备类型设置启用状态
+    DrawerGroup paxGroup = new DrawerGroup("PAX", isPaxDevice);
+    DrawerGroup castlesGroup = new DrawerGroup("CASTLES", isCastlesDevice);
+}
+```
+
+**启用状态规则**:
+| 设备类型 | Helper | PAX 选单 | CASTLES 选单 |
+|---------|--------|---------|-------------|
+| PAX/lephone | PaxHelper | ✅ 启用 | ❌ 禁用 |
+| Castles | CastlesHelper | ❌ 禁用 | ✅ 启用 |
+| 其他 | DummyHelper | ❌ 禁用 | ❌ 禁用 |
+
+**视觉效果**:
+- 启用: 黑色文字，不透明 (alpha = 1.0)
+- 禁用: 灰色文字 (#999999)，40% 透明度 (alpha = 0.4)
+
+**点击事件处理**:
+```java
+// 禁用的项目不响应点击
+binding.expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+    DrawerGroup group = drawerData.get(groupPosition);
+    if (!group.enabled) {
+        return true; // 拦截点击
+    }
+    // ...处理点击
+});
+```
+
+**详细文档**: 见 `docs/Drawer_Menu_Device_Based.md`
+
 ### 权限处理
 
 在 SplashActivity 中统一检查和请求，MainActivity 无需再处理权限。

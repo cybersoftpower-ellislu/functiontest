@@ -8,6 +8,9 @@ import androidx.core.view.GravityCompat;
 import com.cyberpower.edc.core.base.BaseActivity;
 import com.cyberpower.edc.core.basis.AppManager;
 import com.cyberpower.edc.core.basis.LogUtils;
+import com.cyberpower.edc.core.device.hardware.HardwareManager;
+import com.cyberpower.edc.core.device.hardware.castles.CastlesHelper;
+import com.cyberpower.edc.core.device.hardware.pax.PaxHelper;
 import com.cyberpower.functiontest.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
@@ -76,6 +79,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         // 設定群組點擊事件
         binding.expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             DrawerGroup group = drawerData.get(groupPosition);
+
+            // 如果項目被禁用，不處理點擊
+            if (!group.enabled) {
+                LogUtils.d(TAG, "群組 [" + group.name + "] 已禁用，不處理點擊");
+                return true; // 返回 true 表示已處理，不執行其他操作
+            }
+
             if (group.children.isEmpty()) {
                 // 沒有子項目，直接處理點擊
                 handleNavigationClick(group.name);
@@ -88,6 +98,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         // 設定子項目點擊事件
         binding.expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             DrawerGroup group = drawerData.get(groupPosition);
+            
+            // 如果父群組被禁用，不處理子項目點擊
+            if (!group.enabled) {
+                LogUtils.d(TAG, "群組 [" + group.name + "] 已禁用，不處理子項目點擊");
+                return true; // 返回 true 表示已處理
+            }
+            
             String childName = group.children.get(childPosition);
             handleNavigationClick(childName);
             binding.drawerLayout.closeDrawer(GravityCompat.START);
@@ -110,26 +127,47 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     private void initDrawerData() {
         drawerData = new ArrayList<>();
 
-        // 第一層：硬體測試
-        DrawerGroup hardwareGroup = new DrawerGroup("硬體測試");
-        hardwareGroup.addChild("列印測試");
-        hardwareGroup.addChild("掃碼測試");
-        hardwareGroup.addChild("卡片讀取測試");
-        drawerData.add(hardwareGroup);
+        // 檢測當前設備類型
+        boolean isPaxDevice = false;
+        boolean isCastlesDevice = false;
 
-        // 第一層：系統測試
-        DrawerGroup systemGroup = new DrawerGroup("系統測試");
-        systemGroup.addChild("網路測試");
-        systemGroup.addChild("儲存測試");
-        systemGroup.addChild("螢幕測試");
-        drawerData.add(systemGroup);
+        try {
+            HardwareManager hwManager = HardwareManager.getInstance();
+            if (hwManager != null && hwManager.getHelper() != null) {
+                if (hwManager.getHelper() instanceof PaxHelper) {
+                    isPaxDevice = true;
+                    LogUtils.d(TAG, "檢測到 PAX 設備");
+                } else if (hwManager.getHelper() instanceof CastlesHelper) {
+                    isCastlesDevice = true;
+                    LogUtils.d(TAG, "檢測到 Castles 設備");
+                } else {
+                    LogUtils.d(TAG, "檢測到未知設備（使用 DummyHelper）");
+                }
+            }
+        } catch (Exception e) {
+            LogUtils.e(TAG, "檢測設備類型時發生錯誤", e);
+        }
 
-        // 第一層：設定（無子項目）
-        DrawerGroup settingsGroup = new DrawerGroup("設定");
+        // 第一層：PAX（根據設備類型設定啟用狀態）
+        DrawerGroup paxGroup = new DrawerGroup("PAX", isPaxDevice);
+        paxGroup.addChild("列印測試");
+        paxGroup.addChild("掃碼測試");
+        paxGroup.addChild("卡片讀取測試");
+        drawerData.add(paxGroup);
+
+        // 第一層：CASTLES（根據設備類型設定啟用狀態）
+        DrawerGroup castlesGroup = new DrawerGroup("CASTLES", isCastlesDevice);
+        castlesGroup.addChild("列印測試");
+        castlesGroup.addChild("掃碼測試");
+        castlesGroup.addChild("卡片讀取測試");
+        drawerData.add(castlesGroup);
+
+        // 第一層：設定（無子項目，始終啟用）
+        DrawerGroup settingsGroup = new DrawerGroup("設定", true);
         drawerData.add(settingsGroup);
 
-        // 第一層：關於（無子項目）
-        DrawerGroup aboutGroup = new DrawerGroup("關於");
+        // 第一層：關於（無子項目，始終啟用）
+        DrawerGroup aboutGroup = new DrawerGroup("關於", true);
         drawerData.add(aboutGroup);
     }
 
@@ -239,9 +277,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     public static class DrawerGroup {
         public String name;
         public List<String> children;
+        public boolean enabled; // 是否啟用（根據設備類型）
 
-        public DrawerGroup(String name) {
+        public DrawerGroup(String name, boolean enabled) {
             this.name = name;
+            this.enabled = enabled;
             this.children = new ArrayList<>();
         }
 

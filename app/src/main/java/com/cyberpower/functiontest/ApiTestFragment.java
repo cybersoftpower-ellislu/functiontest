@@ -252,7 +252,7 @@ public class ApiTestFragment extends BaseFragment<FragmentApiTestBinding, ApiTes
                 break;
 
             case 5: // 網路連接測試
-                performNetworkTest();
+                viewModel.executeNetworkTest();
                 break;
 
             case 6: // 加密功能測試
@@ -260,7 +260,7 @@ public class ApiTestFragment extends BaseFragment<FragmentApiTestBinding, ApiTes
                 break;
 
             case 7: // 綜合壓力測試
-                performStressTest();
+                viewModel.executeStressTest();
                 break;
 
             default:
@@ -269,23 +269,6 @@ public class ApiTestFragment extends BaseFragment<FragmentApiTestBinding, ApiTes
         }
     }
 
-    /**
-     * 網路連接測試（Fragment 中實現）
-     */
-    private void performNetworkTest() {
-        viewModel.addInfoMessage("========== 網路連接測試 ==========");
-        viewModel.addWarningMessage("此功能需要實現網路連接測試");
-        viewModel.addInfoMessage("提示: 在這裡添加網路測試代碼");
-    }
-
-    /**
-     * 綜合壓力測試（Fragment 中實現）
-     */
-    private void performStressTest() {
-        viewModel.addInfoMessage("========== 綜合壓力測試 ==========");
-        viewModel.addWarningMessage("此功能需要實現壓力測試");
-        viewModel.addInfoMessage("提示: 連續執行多個測試項目");
-    }
 
     @Override
     public void onDestroyView() {

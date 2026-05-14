@@ -1,6 +1,8 @@
 package com.cyberpower.functiontest;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
@@ -12,6 +14,7 @@ import com.cyberpower.edc.core.device.hardware.HardwareManager;
 import com.cyberpower.edc.core.device.hardware.castles.CastlesHelper;
 import com.cyberpower.edc.core.device.hardware.hardwareinterface.IHelper;
 import com.cyberpower.edc.core.device.hardware.pax.PaxHelper;
+import com.cyberpower.edc.core.util.ThreadUtils;
 
 /**
  * ApiTestViewModel
@@ -19,6 +22,9 @@ import com.cyberpower.edc.core.device.hardware.pax.PaxHelper;
  */
 public class ApiTestViewModel extends BaseViewModel {
     private static final String TAG = "ApiTestViewModel";
+
+    // Handler 用於在主執行緒更新 UI
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     // 測試項目說明
     public MutableLiveData<String> testDescription = new MutableLiveData<>("");
@@ -122,21 +128,23 @@ public class ApiTestViewModel extends BaseViewModel {
      * 添加日誌訊息
      */
     public void addLogMessage(String message) {
-        // 不再添加时间戳，直接显示消息
-        String logEntry = message + "\n";
+        // 使用 Handler.post 確保在主執行緒更新，並且不會丟失訊息
+        mainHandler.post(() -> {
+            String logEntry = message + "\n";
 
-        String currentLog = logMessages.getValue();
-        if (currentLog == null) {
-            currentLog = "";
-        }
+            String currentLog = logMessages.getValue();
+            if (currentLog == null) {
+                currentLog = "";
+            }
 
-        // 如果是初始訊息，清空
-        if (currentLog.equals("等待執行...\n")) {
-            currentLog = "";
-        }
+            // 如果是初始訊息，清空
+            if (currentLog.equals("等待執行...\n")) {
+                currentLog = "";
+            }
 
-        logMessages.setValue(currentLog + logEntry);
-        LogUtils.d(TAG, "添加日誌: " + message);
+            logMessages.setValue(currentLog + logEntry);  // 在主執行緒使用 setValue
+            LogUtils.d(TAG, "添加日誌: " + message);
+        });
     }
 
     /**
@@ -171,8 +179,10 @@ public class ApiTestViewModel extends BaseViewModel {
      * 清除日誌訊息
      */
     public void clearLogMessages() {
-        logMessages.setValue("等待執行...\n");
-        LogUtils.d(TAG, "清除日誌訊息");
+        mainHandler.post(() -> {
+            logMessages.setValue("等待執行...\n");  // 在主執行緒使用 setValue
+            LogUtils.d(TAG, "清除日誌訊息");
+        });
     }
 
     /**
@@ -181,6 +191,10 @@ public class ApiTestViewModel extends BaseViewModel {
      */
     public void executeTest(String testItem) {
         LogUtils.d(TAG, "執行測試: " + testItem);
+
+        // 先清除執行過程訊息
+        clearLogMessages();
+
         addInfoMessage("開始執行測試: " + testItem);
         addInfoMessage("當前設備類型: " + currentDeviceType.name());
 
@@ -192,88 +206,92 @@ public class ApiTestViewModel extends BaseViewModel {
      * 執行系統資訊測試
      */
     public void executeSystemInfoTest() {
-        addInfoMessage("========== 系統資訊測試 ==========");
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 系統資訊測試 ==========");
 
-        try {
-            // 1. 製造商
-            addInfoMessage("製造商: " + android.os.Build.MANUFACTURER);
-
-            // 2. 設備型號
-            addInfoMessage("設備型號: " + android.os.Build.MODEL);
-
-            // 3. 設備序號 (SN)
             try {
-                HardwareManager hwManager = HardwareManager.getInstance();
-                if (hwManager != null && hwManager.getSys() != null) {
-                    String sn = hwManager.getSys().getSn();
-                    if (sn != null && !sn.isEmpty()) {
-                        addInfoMessage("設備序號 (SN): " + sn);
+                // 1. 製造商
+                addInfoMessage("製造商: " + android.os.Build.MANUFACTURER);
+
+                // 2. 設備型號
+                addInfoMessage("設備型號: " + android.os.Build.MODEL);
+
+                // 3. 設備序號 (SN)
+                try {
+                    HardwareManager hwManager = HardwareManager.getInstance();
+                    if (hwManager != null && hwManager.getSys() != null) {
+                        String sn = hwManager.getSys().getSn();
+                        if (sn != null && !sn.isEmpty()) {
+                            addInfoMessage("設備序號 (SN): " + sn);
+                        } else {
+                            addWarningMessage("設備序號 (SN): 無法獲取");
+                        }
                     } else {
-                        addWarningMessage("設備序號 (SN): 無法獲取");
+                        addWarningMessage("設備序號 (SN): 系統接口不可用");
                     }
-                } else {
-                    addWarningMessage("設備序號 (SN): 系統接口不可用");
+                } catch (Exception e) {
+                    addWarningMessage("設備序號 (SN): 獲取失敗 - " + e.getMessage());
                 }
+
+                // 4. Android 版本
+                addInfoMessage("Android 版本: " + android.os.Build.VERSION.RELEASE);
+
+                // 5. Android SDK 版本
+                addInfoMessage("Android SDK 版本: " + android.os.Build.VERSION.SDK_INT);
+
+                addSuccessMessage("系統資訊測試完成！");
             } catch (Exception e) {
-                addWarningMessage("設備序號 (SN): 獲取失敗 - " + e.getMessage());
+                addErrorMessage("系統資訊測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "系統資訊測試失敗", e);
             }
-
-            // 4. Android 版本
-            addInfoMessage("Android 版本: " + android.os.Build.VERSION.RELEASE);
-
-            // 5. Android SDK 版本
-            addInfoMessage("Android SDK 版本: " + android.os.Build.VERSION.SDK_INT);
-
-            addSuccessMessage("系統資訊測試完成！");
-        } catch (Exception e) {
-            addErrorMessage("系統資訊測試失敗: " + e.getMessage());
-            LogUtils.e(TAG, "系統資訊測試失敗", e);
-        }
+        });
     }
 
     /**
      * 執行硬體管理器測試
      */
     public void executeHardwareManagerTest() {
-        addInfoMessage("========== 硬體管理器測試 ==========");
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 硬體管理器測試 ==========");
 
-        try {
-            HardwareManager hwManager = HardwareManager.getInstance();
-            if (hwManager == null) {
-                addErrorMessage("HardwareManager 未初始化");
-                return;
+            try {
+                HardwareManager hwManager = HardwareManager.getInstance();
+                if (hwManager == null) {
+                    addErrorMessage("HardwareManager 未初始化");
+                    return;
+                }
+
+                addInfoMessage("HardwareManager 實例: 正常");
+
+                // 檢測設備類型
+                switch (currentDeviceType) {
+                    case PAX:
+                        addSuccessMessage("檢測到 PAX 設備");
+                        addInfoMessage("Helper 類型: PaxHelper");
+                        executePaxSpecificTest();
+                        break;
+
+                    case CASTLES:
+                        addSuccessMessage("檢測到 Castles 設備");
+                        addInfoMessage("Helper 類型: CastlesHelper");
+                        executeCastlesSpecificTest();
+                        break;
+
+                    case UNKNOWN:
+                        addWarningMessage("使用 DummyHelper（未知設備）");
+                        break;
+                }
+
+                // 通用硬體接口測試
+                testCommonHardwareInterfaces(hwManager);
+
+                addSuccessMessage("硬體管理器測試完成！");
+
+            } catch (Exception e) {
+                addErrorMessage("硬體管理器測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "硬體管理器測試失敗", e);
             }
-
-            addInfoMessage("HardwareManager 實例: 正常");
-
-            // 檢測設備類型
-            switch (currentDeviceType) {
-                case PAX:
-                    addSuccessMessage("檢測到 PAX 設備");
-                    addInfoMessage("Helper 類型: PaxHelper");
-                    executePaxSpecificTest();
-                    break;
-
-                case CASTLES:
-                    addSuccessMessage("檢測到 Castles 設備");
-                    addInfoMessage("Helper 類型: CastlesHelper");
-                    executeCastlesSpecificTest();
-                    break;
-
-                case UNKNOWN:
-                    addWarningMessage("使用 DummyHelper（未知設備）");
-                    break;
-            }
-
-            // 通用硬體接口測試
-            testCommonHardwareInterfaces(hwManager);
-
-            addSuccessMessage("硬體管理器測試完成！");
-
-        } catch (Exception e) {
-            addErrorMessage("硬體管理器測試失敗: " + e.getMessage());
-            LogUtils.e(TAG, "硬體管理器測試失敗", e);
-        }
+        });
     }
 
     /**
@@ -381,140 +399,209 @@ public class ApiTestViewModel extends BaseViewModel {
      * 執行列印功能測試
      */
     public void executePrintTest() {
-        addInfoMessage("========== 列印功能測試 ==========");
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 列印功能測試 ==========");
 
-        try {
-            HardwareManager hwManager = HardwareManager.getInstance();
-            if (hwManager == null || hwManager.getPrinter() == null) {
-                addErrorMessage("列印機接口不可用");
-                return;
+            try {
+                HardwareManager hwManager = HardwareManager.getInstance();
+                if (hwManager == null || hwManager.getPrinter() == null) {
+                    addErrorMessage("列印機接口不可用");
+                    return;
+                }
+
+                addInfoMessage("列印機接口: 可用");
+                addInfoMessage("設備類型: " + currentDeviceType.name());
+
+                // 根據設備類型執行不同的測試
+                switch (currentDeviceType) {
+                    case PAX:
+                        addInfoMessage("執行 PAX 列印測試...");
+                        // TODO: 添加 PAX 列印測試代碼
+                        break;
+
+                    case CASTLES:
+                        addInfoMessage("執行 Castles 列印測試...");
+                        // TODO: 添加 Castles 列印測試代碼
+                        break;
+
+                    default:
+                        addWarningMessage("未知設備，跳過列印測試");
+                }
+
+                addSuccessMessage("列印功能測試完成！");
+
+            } catch (Exception e) {
+                addErrorMessage("列印功能測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "列印功能測試失敗", e);
             }
-
-            addInfoMessage("列印機接口: 可用");
-            addInfoMessage("設備類型: " + currentDeviceType.name());
-
-            // 根據設備類型執行不同的測試
-            switch (currentDeviceType) {
-                case PAX:
-                    addInfoMessage("執行 PAX 列印測試...");
-                    // TODO: 添加 PAX 列印測試代碼
-                    break;
-
-                case CASTLES:
-                    addInfoMessage("執行 Castles 列印測試...");
-                    // TODO: 添加 Castles 列印測試代碼
-                    break;
-
-                default:
-                    addWarningMessage("未知設備，跳過列印測試");
-            }
-
-            addSuccessMessage("列印功能測試完成！");
-
-        } catch (Exception e) {
-            addErrorMessage("列印功能測試失敗: " + e.getMessage());
-            LogUtils.e(TAG, "列印功能測試失敗", e);
-        }
+        });
     }
 
     /**
      * 執行掃碼功能測試
      */
     public void executeScanTest() {
-        addInfoMessage("========== 掃碼功能測試 ==========");
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 掃碼功能測試 ==========");
 
-        try {
-            HardwareManager hwManager = HardwareManager.getInstance();
-            if (hwManager == null || hwManager.getScannerHw() == null) {
-                addErrorMessage("掃碼器接口不可用");
-                return;
+            try {
+                HardwareManager hwManager = HardwareManager.getInstance();
+                if (hwManager == null || hwManager.getScannerHw() == null) {
+                    addErrorMessage("掃碼器接口不可用");
+                    return;
+                }
+
+                addInfoMessage("掃碼器接口: 可用");
+                addInfoMessage("設備類型: " + currentDeviceType.name());
+                addWarningMessage("提示: 需要實現掃碼邏輯");
+
+                addSuccessMessage("掃碼功能測試完成！");
+
+            } catch (Exception e) {
+                addErrorMessage("掃碼功能測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "掃碼功能測試失敗", e);
             }
-
-            addInfoMessage("掃碼器接口: 可用");
-            addWarningMessage("提示: 需要實現掃碼邏輯");
-
-            addSuccessMessage("掃碼功能測試完成！");
-
-        } catch (Exception e) {
-            addErrorMessage("掃碼功能測試失敗: " + e.getMessage());
-            LogUtils.e(TAG, "掃碼功能測試失敗", e);
-        }
+        });
     }
 
     /**
      * 執行卡片讀取測試
      */
     public void executeCardReaderTest() {
-        addInfoMessage("========== 卡片讀取測試 ==========");
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 卡片讀取測試 ==========");
 
-        try {
-            HardwareManager hwManager = HardwareManager.getInstance();
-            if (hwManager == null) {
-                addErrorMessage("HardwareManager 不可用");
-                return;
+            try {
+                HardwareManager hwManager = HardwareManager.getInstance();
+                if (hwManager == null) {
+                    addErrorMessage("HardwareManager 不可用");
+                    return;
+                }
+
+                addInfoMessage("檢查讀卡器接口...");
+                addInfoMessage("設備類型: " + currentDeviceType.name());
+
+                if (hwManager.getReader() != null) {
+                    addInfoMessage("✓ 磁條卡讀取器: 可用");
+                }
+
+                if (hwManager.getIcc() != null) {
+                    addInfoMessage("✓ IC 卡讀取器: 可用");
+                }
+
+                addWarningMessage("提示: 需要實現卡片讀取邏輯");
+                addSuccessMessage("卡片讀取測試完成！");
+
+            } catch (Exception e) {
+                addErrorMessage("卡片讀取測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "卡片讀取測試失敗", e);
             }
-
-            addInfoMessage("檢查讀卡器接口...");
-
-            if (hwManager.getReader() != null) {
-                addInfoMessage("✓ 磁條卡讀取器: 可用");
-            }
-
-            if (hwManager.getIcc() != null) {
-                addInfoMessage("✓ IC 卡讀取器: 可用");
-            }
-
-            addWarningMessage("提示: 需要實現卡片讀取邏輯");
-            addSuccessMessage("卡片讀取測試完成！");
-
-        } catch (Exception e) {
-            addErrorMessage("卡片讀取測試失敗: " + e.getMessage());
-            LogUtils.e(TAG, "卡片讀取測試失敗", e);
-        }
+        });
     }
 
     /**
      * 執行加密功能測試
      */
     public void executeCryptoTest() {
-        addInfoMessage("========== 加密功能測試 ==========");
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 加密功能測試 ==========");
 
-        try {
-            HardwareManager hwManager = HardwareManager.getInstance();
-            if (hwManager == null) {
-                addErrorMessage("HardwareManager 不可用");
-                return;
+            try {
+                HardwareManager hwManager = HardwareManager.getInstance();
+                if (hwManager == null) {
+                    addErrorMessage("HardwareManager 不可用");
+                    return;
+                }
+
+                addInfoMessage("檢查加密接口...");
+                addInfoMessage("設備類型: " + currentDeviceType.name());
+
+                if (hwManager.getPed() != null) {
+                    addInfoMessage("✓ PED 接口: 可用");
+                }
+
+                if (hwManager.getCrypto() != null) {
+                    addInfoMessage("✓ Crypto 接口: 可用");
+                }
+
+                addWarningMessage("提示: 需要實現加密邏輯");
+                addSuccessMessage("加密功能測試完成！");
+
+            } catch (Exception e) {
+                addErrorMessage("加密功能測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "加密功能測試失敗", e);
             }
+        });
+    }
 
-            addInfoMessage("檢查加密接口...");
+    /**
+     * 執行網路連接測試
+     */
+    public void executeNetworkTest() {
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 網路連接測試 ==========");
 
-            if (hwManager.getPed() != null) {
-                addInfoMessage("✓ PED 接口: 可用");
+            try {
+                addInfoMessage("設備類型: " + currentDeviceType.name());
+                addInfoMessage("檢查網路連接狀態...");
+
+                // TODO: 添加網路連接測試代碼
+                addWarningMessage("提示: 需要實現網路連接測試邏輯");
+                addInfoMessage("- WiFi 狀態檢查");
+                addInfoMessage("- 行動數據狀態檢查");
+                addInfoMessage("- 網路連通性測試");
+
+                addSuccessMessage("網路連接測試完成！");
+
+            } catch (Exception e) {
+                addErrorMessage("網路連接測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "網路連接測試失敗", e);
             }
+        });
+    }
 
-            if (hwManager.getCrypto() != null) {
-                addInfoMessage("✓ Crypto 接口: 可用");
+    /**
+     * 執行綜合壓力測試
+     */
+    public void executeStressTest() {
+        ThreadUtils.runInBackground(() -> {
+            addInfoMessage("========== 綜合壓力測試 ==========");
+
+            try {
+                addInfoMessage("設備類型: " + currentDeviceType.name());
+                addInfoMessage("開始連續執行多個測試項目...");
+
+                // TODO: 添加綜合壓力測試代碼
+                addWarningMessage("提示: 需要實現壓力測試邏輯");
+                addInfoMessage("建議測試項目:");
+                addInfoMessage("1. 系統資訊測試 (×10)");
+                addInfoMessage("2. 硬體管理器測試 (×10)");
+                addInfoMessage("3. 列印功能測試 (×5)");
+                addInfoMessage("4. 卡片讀取測試 (×5)");
+
+                addSuccessMessage("綜合壓力測試完成！");
+
+            } catch (Exception e) {
+                addErrorMessage("綜合壓力測試失敗: " + e.getMessage());
+                LogUtils.e(TAG, "綜合壓力測試失敗", e);
             }
-
-            addWarningMessage("提示: 需要實現加密邏輯");
-            addSuccessMessage("加密功能測試完成！");
-
-        } catch (Exception e) {
-            addErrorMessage("加密功能測試失敗: " + e.getMessage());
-            LogUtils.e(TAG, "加密功能測試失敗", e);
-        }
+        });
     }
 
     /**
      * 顯示 Toast
      */
     public void showToast(String message) {
-        toastEvent.setValue(message);
+        mainHandler.post(() -> {
+            toastEvent.setValue(message);  // 在主執行緒使用 setValue
+        });
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
+        // 清理 Handler 避免內存洩漏
+        mainHandler.removeCallbacksAndMessages(null);
         LogUtils.d(TAG, "ApiTestViewModel 已清除");
     }
 }

@@ -2,10 +2,10 @@ package com.cyberpower.functiontest;
 
 import android.app.Application;
 
-import com.cyberpower.edc.core.Core;
-import com.cyberpower.edc.core.base.BaseApplication;
-import com.cyberpower.edc.core.basis.AppManager;
-import com.cyberpower.edc.core.basis.LogUtils;
+import com.cyberpower.core.Core;
+import com.cyberpower.core.base.BaseApplication;
+import com.cyberpower.core.basis.AppManager;
+import com.cyberpower.core.basis.LogUtils;
 
 /**
  * FunctionTestApplication

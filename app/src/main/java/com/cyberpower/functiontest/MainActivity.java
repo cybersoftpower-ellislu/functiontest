@@ -5,12 +5,12 @@ import android.view.View;
 
 import androidx.core.view.GravityCompat;
 
-import com.cyberpower.edc.core.base.BaseActivity;
-import com.cyberpower.edc.core.basis.AppManager;
-import com.cyberpower.edc.core.basis.LogUtils;
-import com.cyberpower.edc.core.device.hardware.HardwareManager;
-import com.cyberpower.edc.core.device.hardware.castles.CastlesHelper;
-import com.cyberpower.edc.core.device.hardware.pax.PaxHelper;
+import com.cyberpower.core.base.BaseActivity;
+import com.cyberpower.core.basis.AppManager;
+import com.cyberpower.core.basis.LogUtils;
+import com.cyberpower.core.device.hardware.HardwareManager;
+import com.cyberpower.core.device.hardware.castles.CastlesHelper;
+import com.cyberpower.core.device.hardware.pax.PaxHelper;
 import com.cyberpower.functiontest.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;

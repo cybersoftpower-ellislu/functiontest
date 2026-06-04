@@ -13,7 +13,7 @@ Android hardware function test application for EDC (Electronic Data Capture) dev
   - MainActivity (Drawer navigation with device-based dynamic menu)
   - ApiTestFragment (8 hardware test scenarios)
   - Package: `com.cyberpower.functiontest`
-- **core/** - Shared library (`com.cyberpower.edc.core`) linked as Git submodule
+- **core/** - Shared library (`com.cyberpower.core`) linked as Git submodule
   - Houses all base classes, utilities, and hardware abstractions
   - Independent repository requiring separate commits (see README workflow)
 

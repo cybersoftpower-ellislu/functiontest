@@ -311,7 +311,7 @@ viewModel.executeClickEvent.observe(getViewLifecycleOwner(), unused -> {
 });
 ```
 
-**位置**: `com.cyberpower.edc.core.customobject.SingleLiveEvent`
+**位置**: `com.cyberpower.core.customobject.SingleLiveEvent`
 
 ### 3. 自動滾動實現
 

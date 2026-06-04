@@ -24,7 +24,7 @@
 ```
 functiontest/
 ├── app/              # 最小测试应用 (com.cyberpower.functiontest)
-└── core/             # 共享库 (com.cyberpower.edc.core) - Git submodule
+└── core/             # 共享库 (com.cyberpower.core) - Git submodule
 ```
 
 ### MVVM 架构模式

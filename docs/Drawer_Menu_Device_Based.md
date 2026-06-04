@@ -22,9 +22,9 @@
 
 #### 1.1 添加導入
 ```java
-import com.cyberpower.edc.core.device.hardware.HardwareManager;
-import com.cyberpower.edc.core.device.hardware.castles.CastlesHelper;
-import com.cyberpower.edc.core.device.hardware.pax.PaxHelper;
+import com.cyberpower.core.device.hardware.HardwareManager;
+import com.cyberpower.core.device.hardware.castles.CastlesHelper;
+import com.cyberpower.core.device.hardware.pax.PaxHelper;
 ```
 
 #### 1.2 重構 initDrawerData() 方法

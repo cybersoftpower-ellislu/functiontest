@@ -3,13 +3,12 @@ plugins {
 }
 
 android {
-    namespace 'com.cyberpower.functiontest'
-    compileSdk 34
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.cyberpower.functiontest"
-        minSdk 22
-        targetSdk 34
+        minSdkVersion 22
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 

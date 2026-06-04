@@ -4,9 +4,9 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
-import com.cyberpower.edc.core.base.BaseViewModel;
-import com.cyberpower.edc.core.basis.LogUtils;
-import com.cyberpower.edc.core.customobject.SingleLiveEvent;
+import com.cyberpower.core.base.BaseViewModel;
+import com.cyberpower.core.basis.LogUtils;
+import com.cyberpower.core.customobject.SingleLiveEvent;
 
 /**
  * MainViewModel

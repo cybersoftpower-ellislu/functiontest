@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.cyberpower.edc.core.base.BaseActivity;
-import com.cyberpower.edc.core.basis.AppManager;
-import com.cyberpower.edc.core.basis.LogUtils;
+import com.cyberpower.core.base.BaseActivity;
+import com.cyberpower.core.basis.AppManager;
+import com.cyberpower.core.basis.LogUtils;
 import com.cyberpower.functiontest.databinding.ActivitySplashBinding;
 
 import java.util.ArrayList;

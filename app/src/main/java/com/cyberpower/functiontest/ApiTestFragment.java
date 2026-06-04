@@ -12,8 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.cyberpower.edc.core.base.BaseFragment;
-import com.cyberpower.edc.core.basis.LogUtils;
+import com.cyberpower.core.base.BaseFragment;
+import com.cyberpower.core.basis.LogUtils;
 import com.cyberpower.functiontest.databinding.FragmentApiTestBinding;
 
 import java.util.ArrayList;

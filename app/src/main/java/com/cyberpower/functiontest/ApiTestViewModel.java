@@ -7,14 +7,14 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cyberpower.edc.core.base.BaseViewModel;
-import com.cyberpower.edc.core.basis.LogUtils;
-import com.cyberpower.edc.core.customobject.SingleLiveEvent;
-import com.cyberpower.edc.core.device.hardware.HardwareManager;
-import com.cyberpower.edc.core.device.hardware.castles.CastlesHelper;
-import com.cyberpower.edc.core.device.hardware.hardwareinterface.IHelper;
-import com.cyberpower.edc.core.device.hardware.pax.PaxHelper;
-import com.cyberpower.edc.core.util.ThreadUtils;
+import com.cyberpower.core.base.BaseViewModel;
+import com.cyberpower.core.basis.LogUtils;
+import com.cyberpower.core.customobject.SingleLiveEvent;
+import com.cyberpower.core.device.hardware.HardwareManager;
+import com.cyberpower.core.device.hardware.castles.CastlesHelper;
+import com.cyberpower.core.device.hardware.hardwareinterface.IHelper;
+import com.cyberpower.core.device.hardware.pax.PaxHelper;
+import com.cyberpower.core.util.ThreadUtils;
 
 /**
  * ApiTestViewModel

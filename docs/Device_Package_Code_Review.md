@@ -732,9 +732,9 @@ public cScannerHw getScannerHw() {
 ```xml
 <!-- device_config.xml -->
 <devices>
-    <device manufacturer="PAX" helper="com.cyberpower.edc.core.device.hardware.pax.PaxHelper" />
-    <device manufacturer="lephone" helper="com.cyberpower.edc.core.device.hardware.pax.PaxHelper" />
-    <device manufacturer="Castles" helper="com.cyberpower.edc.core.device.hardware.castles.CastlesHelper" />
+    <device manufacturer="PAX" helper="com.cyberpower.core.device.hardware.pax.PaxHelper" />
+    <device manufacturer="lephone" helper="com.cyberpower.core.device.hardware.pax.PaxHelper" />
+    <device manufacturer="Castles" helper="com.cyberpower.core.device.hardware.castles.CastlesHelper" />
 </devices>
 ```
 

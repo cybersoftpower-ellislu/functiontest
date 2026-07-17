@@ -1,4 +1,4 @@
 rootProject.name = "functiontest"
 include ':app'
-include ':core'
-project(':core').projectDir = new File('core')
+include ':Core'
+project(':Core').projectDir = new File('Core')

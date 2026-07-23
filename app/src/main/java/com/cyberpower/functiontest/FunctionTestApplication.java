@@ -21,8 +21,8 @@ public class FunctionTestApplication extends Application {
         // 初始化 BaseApplication（Stetho debug 工具）
         BaseApplication.setApplication(this);
 
-        // 初始化 Core（XLog、HardwareManager、PAX libraries）
-        Core.init(this);
+        // 初始化 Core（XLog、HardwareManager、PAX libraries）;logPrefix=Log檔名前綴,各App必須不同
+        Core.init(this, "FunctionTest");
 
         // 初始化完成後才能使用 LogUtils（因為 XLog 在 Core.init 中初始化）
         LogUtils.d(TAG, "Application onCreate - 初始化完成");
